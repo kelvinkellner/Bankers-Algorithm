@@ -1,5 +1,5 @@
 <p align= "center">
-    #*Bankers-Algorithm*
+    Bankers-Algorithm<br/>
     CP386 Assignment 4
 </p>
 
@@ -9,9 +9,11 @@
 
 # Screenshots 
 
-# Individual Contribution
---> [Kelvin Kellner](https://github.com/kelvinkellner)<br/>
---> [Nishant Tewari](https://github.com/XSilviaX)<br/> 
+# Individual Contribution 
+### Function-Wise
+| Kelvin | Nish |
+| -------- | -------- |
+| Testing | Testing |   
 
 # Features 
 
