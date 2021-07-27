@@ -1,9 +1,5 @@
 #include "bank.h"
 
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-
 /**
  * Main program driver.
  * 
@@ -12,7 +8,7 @@
  * 
  */
 int main(int argc, int *args[]) {
-    if (argc <= 2) {
+    if (argc < 3) {
         printf("Please include at least 2 space-delimited integer arguments.\n");
         return 1;
     }
@@ -37,12 +33,12 @@ int main(int argc, int *args[]) {
 void run_program() {
     char *input = NULL;
     size_t len = 0;
-    ssize_t status = 0;
+    ssize_t strlen = 0;
 
     int running = true;
     while (running) {
-        status = getline(&input, &len, stdin);
-        if (status == -1)
+        strlen = getline(&input, &len, stdin);
+        if (strlen == -1)
             // exit on error
             running = false;
         else {
@@ -59,7 +55,11 @@ void run_program() {
  * @author Nish Tewari
  * 
  */
-void load_available_resources(int n, int *args[]) {
+void load_available_resources(int argc, int *args[]) {
+    available_resources = (int *)malloc((argc - 1) * sizeof(int));
+    for (int i = 0; i < argc - 1; i++) {
+        available_resources[i] = atoi(args[i + 1]);
+    }
 }
 
 /**
