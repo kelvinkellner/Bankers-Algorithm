@@ -42,7 +42,8 @@ void run_program() {
     int running = true;
     while (running) {
         status = getline(&input, &len, stdin);
-        if (status == -1 || len == 0)
+        if (status == -1)
+            // exit on error
             running = false;
         else {
             printf(input);
