@@ -1,6 +1,6 @@
-_<h1 align= "center"> Bankers-Algorithm</h1>_
+_<h1 align= "center">Bankers-Algorithm</h1>_
 
-<h4 align= "center"> CP386 Assignment 4</h4>
+<h4 align= "center">CP386 Assignment 4</h4>
 
 # Motivation
 
