@@ -1,3 +1,13 @@
+/**
+ * 
+ * CP 386 --> Assignment 4
+ * 
+ * @author Kelvin Kellner - 
+ * @author Nishant Tewari - 190684430 
+ * 
+ * 
+ */
+
 #include "bank.h"
 
 /**
@@ -84,4 +94,44 @@ void load_available_resources(int argc, int *args[]) {
  * 
  */
 void load_customer_resources() {
+}
+
+/**
+ * def'n 
+ *  
+ * @author Kelvin Kellner 
+ * @author Nish Tewari
+ * 
+ */
+void requesting_resources() {
+}
+
+/**
+ * def'n 
+ *  
+ * @author Kelvin Kellner 
+ * @author Nish Tewari
+ * 
+ */
+void release_resources() {
+}
+
+/**
+ * Print all arrays and matrices used 
+ *  
+ * @author Kelvin Kellner 
+ * @author Nish Tewari
+ * 
+ */
+void display_status() {
+}
+
+/**
+ * def'n 
+ *  
+ * @author Kelvin Kellner 
+ * @author Nish Tewari
+ * 
+ */
+void running_resources() {
 }
