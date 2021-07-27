@@ -12,19 +12,28 @@ _<h1 align= "center">Bankers-Algorithm</h1>_
 
 _#### Function-Wise_
 
+<<<<<<< Updated upstream
+=======
+# Individual Contribution 
+*###Function-Wise*
+>>>>>>> Stashed changes
 <table>
 <tr>
-<th>Functions</th>
+<th>Function</th>
 <th>Kelvin</th>
 <th>Nish</th>
 </tr>
 <tr>
+<<<<<<< Updated upstream
 
 <td>
 
 </td><td>
 
 </td></tr> </table>
+=======
+ </table>
+>>>>>>> Stashed changes
 
 # Features
 
@@ -38,8 +47,12 @@ _#### Function-Wise_
 --> [Nishant Tewari](https://github.com/XSilviaX)<br/>
 
 # Credits
+<<<<<<< Updated upstream
 
 --> [GeeksforGeeks](https://www.geeksforgeeks.org/bankers-algorithm-in-operating-system-2/)<br/>
+=======
+--> [GeeksforGeeks - Banker’s Algorithm in Operating System](https://www.geeksforgeeks.org/bankers-algorithm-in-operating-system-2/)<br/> 
+>>>>>>> Stashed changes
 
 # Project License
 
