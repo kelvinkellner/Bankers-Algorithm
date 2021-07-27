@@ -10,7 +10,7 @@ _<h1 align= "center"> Bankers-Algorithm</h1>_
 
 # Individual Contribution
 
-*###Function-Wise*
+### *Function-Wise*
 
 <table>
     <tr>
@@ -19,6 +19,8 @@ _<h1 align= "center"> Bankers-Algorithm</h1>_
         <th>Nish</th>
     </tr>
     <tr>
+        <td>
+        </td>
         <td>
         </td>
         <td>
