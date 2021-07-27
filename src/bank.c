@@ -7,7 +7,7 @@
  * @author Nish Tewari
  * 
  */
-int main(int argc, int *args[]) {
+int main(int argc, char *args[]) {
     if (argc < 3) {
         printf("Please include at least 2 space-delimited integer arguments.\n");
         return 1;
@@ -69,7 +69,7 @@ void run_program() {
  * @author Nish Tewari
  * 
  */
-void load_available_resources(int argc, int *args[]) {
+void load_available_resources(int argc, char *args[]) {
     available_resources = (int *)malloc((argc - 1) * sizeof(int));
     for (int i = 0; i < argc - 1; i++) {
         available_resources[i] = atoi(args[i + 1]);

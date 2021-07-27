@@ -19,6 +19,6 @@ int *available_resources;
 Customer *customer_resources;
 
 /* Function Headers */
-void load_available_resources(int argc, int *args[]);
+void load_available_resources(int argc, char *args[]);
 void load_customer_resources();
 void run_program();
