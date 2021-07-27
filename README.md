@@ -13,18 +13,18 @@ _<h1 align= "center"> Bankers-Algorithm</h1>_
 _###Function-Wise_
 
 <table>
-<tr>
-<th>Function</th>
-<th>Kelvin</th>
-<th>Nish</th>
-</tr>
-<tr>
-
-<td>
-
-</td><td>
-
-</td></tr> </table>
+    <tr>
+        <th>Function</th>
+        <th>Kelvin</th>
+        <th>Nish</th>
+    </tr>
+    <tr>
+        <td>
+        </td>
+        <td>
+        </td>
+    </tr>
+</table>
 
 # Features
 
