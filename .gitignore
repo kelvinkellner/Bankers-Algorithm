@@ -1,3 +1,6 @@
 # ignore compiled c files
 *.exe
 *.out
+
+# vscode support files
+/.vscode
