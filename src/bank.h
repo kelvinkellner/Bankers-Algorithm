@@ -9,6 +9,9 @@ const char *FILE_NAME = "sample4_in.txt";
 
 /* Variables and Structs */
 
+int num_resources;
+int num_customers;
+
 typedef struct customer {
     int *maximum;
     int *allocated;
@@ -20,5 +23,5 @@ Customer *customer_resources;
 
 /* Function Headers */
 void load_available_resources(int argc, char *args[]);
-int load_customer_resources(int count_resources);
+int load_customer_resources();
 void run_program();
