@@ -1,5 +1,7 @@
 #include "bank.h"
 
+#include "util.c"
+
 /**
  * Main program driver.
  * 
@@ -14,7 +16,7 @@ int main(int argc, char *args[]) {
     }
 
     load_available_resources(argc, args);
-    load_customer_resources();
+    load_customer_resources(argc - 1);
 
     run_program();
 
@@ -70,9 +72,9 @@ void run_program() {
  * 
  */
 void load_available_resources(int argc, char *args[]) {
-    available_resources = (int *)malloc((argc - 1) * sizeof(int));
+    available_resources = (int *)malloc((argc - 1) * sizeof(int));  // allocate memory for arry
     for (int i = 0; i < argc - 1; i++) {
-        available_resources[i] = atoi(args[i + 1]);
+        available_resources[i] = atoi(args[i + 1]);  // fill array using args
     }
 }
 
@@ -83,5 +85,37 @@ void load_available_resources(int argc, char *args[]) {
  * @author Nish Tewari
  * 
  */
-void load_customer_resources() {
+int load_customer_resources(int count_resources) {
+    FILE *fp;
+    char *line = NULL;
+    size_t len = 0;
+    ssize_t strlen;
+
+    fp = fopen(FILE_NAME, "r");
+    if (fp == NULL) {
+        printf("File opening error.");
+        return -1;
+    }
+
+    int count_customers = 0;
+    // count number of lines in the file
+    while (fgets(line, sizeof(line), fp) != NULL)
+        count_customers += 1;
+    fseek(fp, 0, SEEK_SET);  // reset fp back to start
+
+    customer_resources = malloc(count_customers * sizeof(Customer));
+
+    int i = 0;
+    while ((strlen = getline(&line, &len, fp)) != -1) {
+        Customer c;
+        c.maximum = delimited_string_to_int_array(line, ",", count_resources);
+        c.allocated = malloc(sizeof(int) * count_resources);
+        c.need = malloc(sizeof(int) * count_resources);
+
+        customer_resources[i] = c;
+        i++;
+    }
+
+    fclose(fp);
+    return count_customers;
 }
