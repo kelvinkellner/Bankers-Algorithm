@@ -40,6 +40,7 @@ void run_program() {
     ssize_t status = 0;
 
     int running = true;
+
     while (running) {
         status = getline(&input, &len, stdin);
         if (status == -1)
@@ -47,8 +48,21 @@ void run_program() {
             running = false;
         else {
             printf(input);
+            if (input == "RQ") {
+                //TODO: Function Call
+                printf("State is safe, and request is satisfied");
+            } else if (input == "RL") {
+                //TODO: Function Call
+                printf("The resources have been released succesfully");
+            } else if (input == "Status") {
+            } else if (input == "Run") {
+            } else if (input == "Exit") {
+            } else {
+                printf("Invalid Command, Please Try Again!");
+            }
         }
     }
+
     free(input);
 }
 
