@@ -10,7 +10,7 @@ _<h1 align= "center"> Bankers-Algorithm</h1>_
 
 # Individual Contribution
 
-_###Function-Wise_
+*###Function-Wise*
 
 <table>
 <tr>
