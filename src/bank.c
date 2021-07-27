@@ -1,6 +1,8 @@
 #include "bank.h"
 
+#include <stdbool.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 /**
  * Main program driver.
@@ -16,7 +18,7 @@ int main(int argc, int *args[]) {
     }
 
     load_available_resources(argc, args);
-    load_customer_resources(FILE_NAME);
+    load_customer_resources();
 
     run_program();
 
@@ -33,6 +35,20 @@ int main(int argc, int *args[]) {
  * 
  */
 void run_program() {
+    char *input = NULL;
+    size_t len = 0;
+    ssize_t status = 0;
+
+    int running = true;
+    while (running) {
+        status = getline(&input, &len, stdin);
+        if (status == -1 || len == 0)
+            running = false;
+        else {
+            printf(input);
+        }
+    }
+    free(input);
 }
 
 /**
@@ -52,5 +68,5 @@ void load_available_resources(int n, int *args[]) {
  * @author Nish Tewari
  * 
  */
-void load_customer_resources(char *file_name) {
+void load_customer_resources() {
 }

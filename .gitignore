@@ -1,0 +1,3 @@
+# ignore compiled c files
+*.exe
+*.out
