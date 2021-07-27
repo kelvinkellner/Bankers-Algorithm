@@ -40,6 +40,7 @@ void run_program() {
     int running = true;
 
     while (running) {
+        printf("Enter Command: ");
         strlen = getline(&input, &len, stdin);
         if (strlen == -1)
             // exit on error
@@ -55,8 +56,10 @@ void run_program() {
             } else if (input == "Status") {
             } else if (input == "Run") {
             } else if (input == "Exit") {
+                printf("Exiting...\n");
+                running = false;
             } else {
-                printf("Invalid Command, Please Try Again!");
+                printf("Invalid Command.\nPlease Try Again!\n");
             }
         }
     }
@@ -100,8 +103,10 @@ int load_customer_resources(int count_resources) {
     int count_customers = 0;
     // count number of lines in the file
     while (fgets(line, sizeof(line), fp) != NULL)
-        count_customers += 1;
+        count_customers++;
     fseek(fp, 0, SEEK_SET);  // reset fp back to start
+
+    return 0;
 
     customer_resources = malloc(count_customers * sizeof(Customer));
 
@@ -116,6 +121,6 @@ int load_customer_resources(int count_resources) {
         i++;
     }
 
+    free(line);
     fclose(fp);
-    return count_customers;
 }

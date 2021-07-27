@@ -20,5 +20,5 @@ Customer *customer_resources;
 
 /* Function Headers */
 void load_available_resources(int argc, char *args[]);
-void load_customer_resources();
+int load_customer_resources(int count_resources);
 void run_program();
