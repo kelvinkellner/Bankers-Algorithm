@@ -177,7 +177,7 @@ void display_status() {
  * @author Kelvin Kellner 
  * @author Nish Tewari
  */
-void request_resource() {
+void request_resource(int *request) {
 }
 
 /**
@@ -220,15 +220,19 @@ bool is_safe() {
     while (found_customer && !safe) {
         found_customer = false;
         safe = true;
-        for (i = 0; i < num_customers && !found_customer; i++) {  // condition 1
-            if (finish[i] == false) {
-                for (j = 0; j < num_resources && !found_customer; j++) {  // condition 2
-                    if (customer_resources[i].need_resources[j] <= work[j]) {
-                        // apply changes to work and finished
-                        found_customer = true;
+        // attempt to find a customer to finish
+        for (i = 0; i < num_customers && !found_customer; i++) {
+            if (finish[i] == false) {  // condition 1:  customer is not finished
+                found_customer = true;
+                // condition 2: customer need vector < work vector
+                for (j = 0; j < num_resources && found_customer; j++)
+                    found_customer = found_customer && customer_resources[i].need_resources[j] <= work[j];
+                // if both conditions are met...
+                if (found_customer) {
+                    // update work and finish vectors to reflect changes
+                    for (int j = 0; j < num_resources; j++)
                         work[j] += customer_resources[i].allocation_resources[j];
-                        finish[i] = true;
-                    }
+                    finish[i] = true;
                 }
             }
             safe = safe && finish[i];  // system is safe if all customers have finished
