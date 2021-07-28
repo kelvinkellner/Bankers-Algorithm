@@ -81,6 +81,8 @@ void run_program() {
             } else if (strcmp(input, "status") == 0) {
                 display_status();
             } else if (strcmp(input, "run") == 0) {
+                // TODO: not correct function call for run
+                printf("%s", is_safe() ? "Safe: YES\n" : "Safe: NO\n");
             } else if (strcmp(input, "exit") == 0) {
                 printf("Exiting...\n");
                 running = false;
@@ -136,7 +138,6 @@ int load_customer_resources() {
         customer.maximum_resources = delimited_string_to_int_array(line, ",", num_resources);
         customer.allocation_resources = malloc(sizeof(int) * num_resources);
         customer.need_resources = malloc(sizeof(int) * num_resources);
-        customer.finished = false;
         customer_resources[c] = customer;
         c++;
     }
@@ -203,29 +204,34 @@ void run_resource() {
 bool is_safe() {
     // use safety algorithm from lecture
     int *work = (int *)malloc(num_resources * sizeof(int));
-    bool *finished = (bool)malloc(num_customers * sizeof(bool));
-    int i;
+    bool *finish = (bool *)malloc(num_customers * sizeof(bool));
+    int i, j;
     // fill with default values
     for (i = 0; i < num_resources; i++)
         work[i] = available_resources[i];
     for (i = 0; i < num_customers; i++)
-        finished[i] = false;
-    // use algorithm
+        finish[i] = false;
     bool safe = false;
-    bool found_customer;
+    bool found_customer = true;
     while (found_customer && !safe) {
         found_customer = false;
-        for (i = 0; i < num_customers && !found_customer; i++) {
-            if (finished[i] == false) {
-                for (j = 0; j < num_resources && !found_customer; j++) {
+        safe = true;
+        for (i = 0; i < num_customers && !found_customer; i++) {  // condition 1
+            if (finish[i] == false) {
+                for (j = 0; j < num_resources && !found_customer; j++) {  // condition 2
                     if (customer_resources[i].need_resources[j] <= work[j]) {
+                        // apply changes to work and finished
                         found_customer = true;
-                        work[j] += customer_resources[i].allocation[j];
-                        finished[i] = true;
+                        work[j] += customer_resources[i].allocation_resources[j];
+                        finish[i] = true;
                     }
                 }
             }
+            safe = safe && finish[i];  // system is safe if all customers have finished
         }
     }
+    // no memory leaks please :)
     free(work);
+    free(finish);
+    return safe;
 }

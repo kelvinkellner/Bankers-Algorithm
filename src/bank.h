@@ -35,3 +35,4 @@ void display_status();
 void request_resource();
 void release_resource();
 void run_resource();
+bool is_safe();
