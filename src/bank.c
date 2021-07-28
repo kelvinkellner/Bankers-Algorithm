@@ -133,12 +133,17 @@ int load_customer_resources() {
 
     customer_resources = malloc(num_customers * sizeof(Customer));
 
-    int c = 0;
+    int r, c = 0;
     while ((strlen = getline(&line, &len, fp)) != -1) {
         Customer customer;
         customer.maximum_resources = delimited_string_to_int_array(line, ",", num_resources);
         customer.allocation_resources = malloc(sizeof(int) * num_resources);
         customer.need_resources = malloc(sizeof(int) * num_resources);
+        // ensure no memory-related value issues occur
+        for (r = 0; r < num_resources; r++)
+            customer.allocation_resources[r] = 0;
+        for (r = 0; r < num_resources; r++)
+            customer.need_resources[r] = 0;
         customer_resources[c] = customer;
         c++;
     }
@@ -209,35 +214,35 @@ bool is_safe() {
     // use safety algorithm from lecture
     int *work = (int *)malloc(num_resources * sizeof(int));
     bool *finish = (bool *)malloc(num_customers * sizeof(bool));
-    int i, j;
+    int r, c;
     // fill with default values
-    for (i = 0; i < num_resources; i++)
-        work[i] = available_resources[i];
-    for (i = 0; i < num_customers; i++)
-        finish[i] = false;
-    bool safe = false;
-    bool found_customer = true;
-    while (found_customer && !safe) {
-        found_customer = false;
+    for (r = 0; r < num_resources; r++)
+        work[r] = available_resources[r];
+    for (c = 0; c < num_customers; c++)
+        finish[c] = false;
+    // default values for looping
+    bool safe, found_customer;
+    do {
         safe = true;
+        found_customer = false;
         // attempt to find a customer to finish
-        for (i = 0; i < num_customers && !found_customer; i++) {
-            if (finish[i] == false) {  // condition 1:  customer is not finished
+        for (c = 0; c < num_customers && !found_customer; c++) {
+            if (finish[c] == false) {  // condition 1:  customer is not finished
                 found_customer = true;
                 // condition 2: customer need vector < work vector
-                for (j = 0; j < num_resources && found_customer; j++)
-                    found_customer = found_customer && customer_resources[i].need_resources[j] <= work[j];
+                for (r = 0; r < num_resources && found_customer; r++)
+                    found_customer = customer_resources[c].need_resources[r] <= work[r];
                 // if both conditions are met...
                 if (found_customer) {
                     // update work and finish vectors to reflect changes
                     for (int j = 0; j < num_resources; j++)
-                        work[j] += customer_resources[i].allocation_resources[j];
-                    finish[i] = true;
+                        work[r] += customer_resources[c].allocation_resources[r];
+                    finish[c] = true;
                 }
             }
-            safe = safe && finish[i];  // system is safe if all customers have finished
+            safe = safe && finish[c];  // system is safe if all customers have finished
         }
-    }
+    } while (found_customer && !safe);  // loop until (state is safe) or (state is unsafe and no changes are made to system)
     // no memory leaks please :)
     free(work);
     free(finish);
