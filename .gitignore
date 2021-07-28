@@ -2,5 +2,8 @@
 *.exe
 *.out
 
+# stack dump file
+*.stackdump
+
 # vscode support files
 /.vscode
