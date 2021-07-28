@@ -1,5 +1,4 @@
 /**
- * 
  * Banker's Algoritm
  * CP 386 --> Assignment 4
  * 
@@ -7,7 +6,6 @@
  * @author Nishant Tewari (190684430) - https://github.com/XSilviaX
  * 
  * @see https://github.com/kelvinkellner/Bankers-Algorithm
- *
  */
 
 #include "bank.h"
@@ -19,7 +17,6 @@
  * 
  * @author Kelvin Kellner
  * @author Nish Tewari
- * 
  */
 int main(int argc, char *args[]) {
     if (argc < 3) {
@@ -44,7 +41,6 @@ int main(int argc, char *args[]) {
  * 
  * @author Kelvin Kellner
  * @author Nish Tewari
- * 
  */
 void run_program() {
     char *input = NULL;
@@ -100,7 +96,6 @@ void run_program() {
  * 
  * @author Kelvin Kellner
  * @author Nish Tewari
- * 
  */
 void load_available_resources(int argc, char *args[]) {
     num_resources = argc - 1;
@@ -110,6 +105,12 @@ void load_available_resources(int argc, char *args[]) {
     }
 }
 
+/**
+ * Loads customer resource data from the file.
+ *
+ * @author Kelvin Kellner
+ * @author Nish Tewari
+ */
 int load_customer_resources() {
     FILE *fp;
     char *line;
@@ -151,7 +152,6 @@ int load_customer_resources() {
  *  
  * @author Kelvin Kellner 
  * @author Nish Tewari
- * 
  */
 void display_status() {
     int c;
@@ -176,7 +176,6 @@ void display_status() {
  *  
  * @author Kelvin Kellner 
  * @author Nish Tewari
- * 
  */
 void request_resource() {
 }
@@ -186,7 +185,6 @@ void request_resource() {
  *  
  * @author Kelvin Kellner 
  * @author Nish Tewari
- * 
  */
 void release_resource() {
 }
@@ -196,11 +194,17 @@ void release_resource() {
  *  
  * @author Kelvin Kellner 
  * @author Nish Tewari
- * 
  */
 void run_resource() {
 }
 
+/**
+ * Uses Saftey Algorithm to determine whether or not
+ * system is in a safe state.
+ * 
+ * @author Kelvin Kellner
+ * @author Nish Tewari
+ */
 bool is_safe() {
     // use safety algorithm from lecture
     int *work = (int *)malloc(num_resources * sizeof(int));

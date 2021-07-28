@@ -1,7 +1,5 @@
 #include <string.h>
 
-void print_array(int* arr, int len);
-
 int* delimited_string_to_int_array(char* msg, char* delimeter, int len) {
     int* arr = (int*)malloc(len * sizeof(int));
 
