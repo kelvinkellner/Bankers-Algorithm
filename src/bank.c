@@ -182,7 +182,7 @@ void display_status() {
  * @author Kelvin Kellner 
  * @author Nish Tewari
  */
-void request_resources(int customer_number, int *request) {
+char *request_resources(int customer_number, int *request) {
     // uses resource-request algorithm from lecture notes
     int r, c = customer_number;
     bool valid = true, safe;
@@ -203,7 +203,7 @@ void request_resources(int customer_number, int *request) {
             }
             if (is_safe()) {
                 // if system is safe after fulfilling the resource request, print success message
-                printf("State is safe, and request is satisfied\n");
+                return "State is safe, and request is satisfied\n";
             } else {
                 // if system becomes unsafe, undo temporary changes to value and print failure message
                 for (r = 0; r < num_resources; r++) {
@@ -211,13 +211,13 @@ void request_resources(int customer_number, int *request) {
                     customer_resources[c].allocation_resources[r] -= request[r];
                     customer_resources[c].need_resources[r] += request[r];
                 }
-                printf("State is unsafe, not enough resources available for that request\n");
+                return "State is unsafe, not enough resources available for that request\n";
             }
         } else {
-            printf("Not enough resources available, please wait\n");
+            return "Not enough resources available, please wait\n";
         }
     } else {
-        printf("Request exceeds maximum resource claim, cannot be satisfied\n");
+        return "Request exceeds maximum resource claim, cannot be satisfied\n";
     }
 }
 
@@ -227,7 +227,7 @@ void request_resources(int customer_number, int *request) {
  * @author Kelvin Kellner 
  * @author Nish Tewari
  */
-void release_resources(int customer_number, int *request) {
+char *release_resources(int customer_number, int *request) {
     int r;
     bool valid = true;
     // check if release vector > allocation vector, otherwise a release request might "create new resources"
@@ -241,9 +241,9 @@ void release_resources(int customer_number, int *request) {
             // simplfy make the resources available again
             available_resources[r] += request[r];
         }
-        printf("Resources have been released\n");
+        return "Resources have been released\n";
     } else
-        printf("Cannot release resources that are not in use\n");
+        return "Cannot release resources that are not in use\n";
 }
 
 /**
@@ -326,10 +326,9 @@ void run_resources() {
             // display new status
             printf("    New available: ");
             print_array(available_resources, num_resources);
-            printf("\n");
         }
     } else {
-        printf("Safe sequence is: NO SAFE SEQUENCES\n");
+        printf("Safe sequence is: There are no safe sequences\n");
     }
 }
 
@@ -387,7 +386,7 @@ bool is_safe() {
  * @author Kelvin Kellner
  * @author Nish Tewari
  */
-void handle_request(char *input, int len, void (*func)(int, int *)) {
+char *handle_request(char *input, int len, char *(*func)(int, int *)) {
     int customer_number = -1;
     int *request = (int *)malloc(len * sizeof(int));
     int i, n, count = 0;
@@ -404,7 +403,8 @@ void handle_request(char *input, int len, void (*func)(int, int *)) {
                     customer_number = atoi(token);
                 } else {
                     valid = false;
-                    printf("Bad command, negative values are not acceptable\n");
+                    free(request);
+                    return "Bad command, negative values are not acceptable\n";
                 }
             } else {  // number for resource
                 if (count < num_resources) {
@@ -413,26 +413,31 @@ void handle_request(char *input, int len, void (*func)(int, int *)) {
                         count++;  // increment count
                     } else {
                         valid = false;
-                        printf("Bad command, negative values are not acceptable\n");
+                        free(request);
+                        return "Bad command, negative values are not acceptable\n";
                     }
                 } else {
                     valid = false;
-                    printf("Bad command, more arguments given than needed\n");
+                    free(request);
+                    return "Bad command, more arguments given than needed\n";
                 }
             }
         } else {
             valid = false;
-            printf("Bad command, non-numeric argument given\n");
+            free(request);
+            return "Bad command, non-numeric argument given\n";
         }
     }
     if (valid) {
         if (count == num_resources) {
-            // valid!!! go ahead and call the function
-            func(customer_number, request);
+            // valid!!! go ahead and call the function, return its return value :)
+            char *msg = func(customer_number, request);
+            free(request);
+            return msg;
         } else {
             valid = false;
-            printf("Bad command, not enough arguments given\n");
+            free(request);
+            return "Bad command, not enough arguments given\n";
         }
     }
-    free(request);  // no memory leaks :)
 }

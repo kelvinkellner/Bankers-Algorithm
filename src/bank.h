@@ -33,4 +33,4 @@ void run_resources();
 
 bool is_safe();
 
-void handle_request(char *input, int len, void (*func)(int, int *));
+char *handle_request(char *input, int len, char *(*func)(int, int *));
