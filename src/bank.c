@@ -75,8 +75,7 @@ void run_program() {
             } else if (strcmp(input, "status") == 0) {
                 display_status();
             } else if (strcmp(input, "run") == 0) {
-                // TODO: not correct function call for run
-                printf("%s", is_safe() ? "Safe: YES\n" : "Safe: NO\n");
+                run_resources();
             } else if (strcmp(input, "exit") == 0) {
                 printf("Exiting...\n");
                 running = false;
@@ -254,8 +253,84 @@ void release_resources(int customer_number, int *request) {
  * @author Nish Tewari
  */
 void run_resources() {
-    // for each customer
-    // if enough resources in past + present then good
+    // using algorithm Kelvin tried and figured out on paper, works in all tested cases
+    // consider digging deeper into lectures and online to see if there is a better solution
+    int *sequence = (int *)malloc(num_customers * sizeof(int));
+    int *all_resources = (int *)malloc(num_resources * sizeof(int));  // all available resources + all resources of prior, already finished threads
+    int c, r, position = 0, cycle_start = -1, temp;
+    bool safe_sequence_exists = true, thread_can_finish;
+    // first, find a safe sequence if there is one
+    // default sequence is 0, 1, 2, 3, ..., num_customers
+    for (c = 0; c < num_customers; c++)
+        sequence[c] = c;
+    // all_resources = available_resources to start
+    for (r = 0; r < num_resources; r++)
+        all_resources[r] = available_resources[r];
+    while (position < num_customers && safe_sequence_exists) {
+        // if there is a cycle we have exhausted all remaining sequences, there are no safe sequences
+        // note: it is certainly possible for this algorithm to miss some solutions, more testing is needed
+        if (cycle_start == sequence[position]) {
+            safe_sequence_exists = false;
+        } else {
+            // check if current thread can finish with all available and prior resources
+            thread_can_finish = true;
+            for (r = 0; r < num_resources; r++) {
+                // if needs more resources than available from sequence so far
+                if (customer_resources[sequence[position]].need_resources[r] > all_resources[r])
+                    thread_can_finish = false;
+            }
+            // do the appropriate action whether it can finish immediately or needs to wait until later in the sequence
+            if (thread_can_finish) {
+                // clear cycle_start and move position forward, this position is where thread will sit in our sequence
+                cycle_start = -1;
+                position++;
+                // add the resources from the thread to all_resources
+                for (r = 0; r < num_resources; r++)
+                    all_resources[r] += customer_resources[sequence[position]].need_resources[r];
+            } else {
+                // mark thread as cycle_start if there is not already a start
+                if (cycle_start == -1)
+                    cycle_start = sequence[position];
+                // move thread to back of sequence for now;
+                temp = sequence[position];
+                for (c = position + 1; c < num_customers; c++) {
+                    sequence[c - 1] = sequence[c];
+                }
+                sequence[num_customers - 1] = temp;
+            }
+        }
+        // printf("cycle_start: %d, position: %d, sequence: ");
+        // print_array(sequence, num_customers);
+    }
+    // once we have a safe sequence, we can run it
+    if (safe_sequence_exists) {
+        printf("Safe sequence is: ");
+        print_array(sequence, num_customers);
+        for (position = 0; position < num_customers; position++) {
+            // display status before running thread
+            c = sequence[position];  // current customer
+            printf("--> Customer/Thread %d\n", c);
+            printf("    Allocated resources: ");
+            print_array(customer_resources[c].allocation_resources, num_resources);
+            printf("    Needed: ");
+            print_array(customer_resources[c].need_resources, num_resources);
+            printf("    Available: ");
+            print_array(available_resources, num_resources);
+            // run thread by requesting all needed resources
+            printf("    Thread has started\n");
+            request_resources(c, customer_resources[c].need_resources);
+            printf("    Thread has finished\n");
+            // release resources
+            printf("    Thread is releasing resources\n");
+            release_resources(c, customer_resources[c].allocation_resources);
+            // display new status
+            printf("    New available: ");
+            print_array(available_resources, num_resources);
+            printf("\n");
+        }
+    } else {
+        printf("Safe sequence is: NO SAFE SEQUENCES\n");
+    }
 }
 
 /**
