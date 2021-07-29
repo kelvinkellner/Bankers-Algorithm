@@ -136,8 +136,12 @@ int load_customer_resources() {
     // count number of lines in the file
     char ch;
     while ((ch = fgetc(fp)) != EOF) {
-        if (ch == '\n')
+        if (ch == '\n') {
             num_customers++;
+            // if line was actually empty then don't count it
+            if ((ch = fgetc(fp)) == EOF)
+                num_customers--;
+        }
     }
     fseek(fp, 0, SEEK_SET);  // reset fp back to start after counting
 
@@ -147,19 +151,22 @@ int load_customer_resources() {
     // read customer data from file
     int r, c = 0;
     while ((read = getline(&line, &len, fp)) != -1) {  // for each line in file
-        // create customer data structure and fill with data
-        Customer customer;
-        customer.max_resources = delimited_string_to_int_array(line, ",", num_resources);
-        customer.allocation_resources = malloc(sizeof(int) * num_resources);
-        customer.need_resources = malloc(sizeof(int) * num_resources);
-        // ensure no memory-related value issues occur by setting values to 0 (frick C)
-        for (r = 0; r < num_resources; r++)
-            customer.allocation_resources[r] = 0;
-        // need = max - allocation, allocation is all 0s now, so set to need = max to start
-        for (r = 0; r < num_resources; r++)
-            customer.need_resources[r] = customer.max_resources[r];
-        customer_resources[c] = customer;
-        c++;
+        // ignore blank lines
+        if (strlen(line) > 1) {
+            // create customer data structure and fill with data
+            Customer customer;
+            customer.max_resources = delimited_string_to_int_array(line, ",", num_resources);
+            customer.allocation_resources = malloc(sizeof(int) * num_resources);
+            customer.need_resources = malloc(sizeof(int) * num_resources);
+            // ensure no memory-related value issues occur by setting values to 0 (frick C)
+            for (r = 0; r < num_resources; r++)
+                customer.allocation_resources[r] = 0;
+            // need = max - allocation, allocation is all 0s now, so set to need = max to start
+            for (r = 0; r < num_resources; r++)
+                customer.need_resources[r] = customer.max_resources[r];
+            customer_resources[c] = customer;
+            c++;
+        }
     }
     // no memory leaks please :)
     free(line);
