@@ -69,10 +69,9 @@ void run_program() {
 
             // call appropriate function per command
             if (strlen(input) >= 2 && input[0] == 'r' && input[1] == 'q') {
-                handle_request(input, len, request_resource);
+                handle_request(input, len, request_resources);
             } else if (strlen(input) >= 2 && input[0] == 'r' && input[1] == 'l') {
-                //TODO: Function Call
-                printf("The resources have been released succesfully\n");
+                handle_request(input, len, release_resources);
             } else if (strcmp(input, "status") == 0) {
                 display_status();
             } else if (strcmp(input, "run") == 0) {
@@ -184,7 +183,7 @@ void display_status() {
  * @author Kelvin Kellner 
  * @author Nish Tewari
  */
-void request_resource(int customer_number, int *request) {
+void request_resources(int customer_number, int *request) {
     // uses resource-request algorithm from lecture notes
     int r, c = customer_number;
     bool valid = true, safe;
@@ -229,7 +228,23 @@ void request_resource(int customer_number, int *request) {
  * @author Kelvin Kellner 
  * @author Nish Tewari
  */
-void release_resource() {
+void release_resources(int customer_number, int *request) {
+    int r;
+    bool valid = true;
+    // check if release vector > allocation vector, otherwise a release request might "create new resources"
+    for (r = 0; r < num_resources; r++) {
+        // not exhaustive, we do not check if this customer is the one holding the resources, not important
+        if (request[r] > customer_resources[customer_number].allocation_resources[r])
+            valid = false;
+    }
+    if (valid) {
+        for (r = 0; r < num_resources; r++) {
+            // simplfy make the resources available again
+            available_resources[r] += request[r];
+        }
+        printf("Resources have been released\n");
+    } else
+        printf("Cannot release resources that are not in use\n");
 }
 
 /**
@@ -238,7 +253,7 @@ void release_resource() {
  * @author Kelvin Kellner 
  * @author Nish Tewari
  */
-void run_resource() {
+void run_resources() {
 }
 
 /**
@@ -299,7 +314,7 @@ void handle_request(char *input, int len, void (*func)(int, int *)) {
     int *request = (int *)malloc(len * sizeof(int));
     int i, n, count = 0;
     bool is_number = true, valid = true;
-    char *token = strsep(&input, " ");  // skip "rq"
+    char *token = strsep(&input, " ");  // skip "RQ" or "RL"
     while ((token = strsep(&input, " ")) != NULL && valid) {
         // check if value is numeric first, only valid entries please!
         n = strlen(token);

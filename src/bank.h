@@ -27,9 +27,9 @@ int load_customer_resources();
 void run_program();
 
 void display_status();
-void request_resource(int customer_number, int *request);
-void release_resource();
-void run_resource();
+void request_resources(int customer_number, int *request);
+void release_resources(int customer_number, int *request);
+void run_resources();
 
 bool is_safe();
 
