@@ -70,13 +70,13 @@ void run_program() {
                     *ch_ptr = tolower(*ch_ptr);
             }
 
-            // call appropriate function per command
+            // call appropriate function per command and print messages as needed
             // "RQ ..."
             if (strlen(input) >= 2 && input[0] == 'r' && input[1] == 'q')
-                handle_request(input, len, request_resources);
+                printf("%s", handle_request(input, len, request_resources));
             // "RL ..."
             else if (strlen(input) >= 2 && input[0] == 'r' && input[1] == 'l')
-                handle_request(input, len, release_resources);
+                printf("%s", handle_request(input, len, release_resources));
             // "Status"
             else if (strcmp(input, "status") == 0)
                 display_status();
@@ -332,11 +332,11 @@ void run_resources() {
             print_array(available_resources, num_resources);
             // run thread by requesting all needed resources
             printf("    Thread has started\n");
-            request_resources(c, customer_resources[c].need_resources);
+            printf("%s", request_resources(c, customer_resources[c].need_resources));
             printf("    Thread has finished\n");
             // release resources
             printf("    Thread is releasing resources\n");
-            release_resources(c, customer_resources[c].allocation_resources);
+            printf("%s", release_resources(c, customer_resources[c].allocation_resources));
             // display new status
             printf("    New available: ");
             print_array(available_resources, num_resources);
@@ -415,8 +415,14 @@ char *handle_request(char *input, int len, char *(*func)(int, int *)) {
             // use the number as customer_number if it is the first number we find
             if (customer_number == -1) {
                 if (atoi(token) >= 0)
-                    // use as customer_number
-                    customer_number = atoi(token);
+                    if (atoi(token) < num_customers)
+                        // use as customer_number
+                        customer_number = atoi(token);
+                    else {
+                        valid = false;
+                        free(request);  // no memory leaks :)
+                        return "Bad command, customer number too big\n";
+                    }
                 else {
                     valid = false;
                     free(request);  // no memory leaks :)
