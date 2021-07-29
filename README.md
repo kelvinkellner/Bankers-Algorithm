@@ -5,6 +5,9 @@ _<h1 align= "center">Bankers-Algorithm</h1>_
 # Motivation
 
 # Installation
+1. Programming Language:<img align="left" alt="C" width="26px" src="https://raw.githubusercontent.com/jmnote/z-icons/master/svg/c.svg" /> <br/>
+2. GCC Complier for C <br/>
+3. Windows Subsystem for Linux 
 
 # Screenshots
 
