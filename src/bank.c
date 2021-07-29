@@ -298,12 +298,13 @@ void run_resources() {
             }
             // do the appropriate action whether it can finish immediately or needs to wait until later in the sequence
             if (thread_can_finish) {
+                // add the resources from the thread to all_resources
+                for (r = 0; r < num_resources; r++)
+                    // had .need_resources[r] before, switching to .allocation_resources[r] fixed as per paper on front of me lol
+                    all_resources[r] += customer_resources[sequence[position]].allocation_resources[r];
                 // clear cycle_start and move position forward, this position is where thread will sit in our sequence
                 cycle_start = -1;
                 position++;
-                // add the resources from the thread to all_resources
-                for (r = 0; r < num_resources; r++)
-                    all_resources[r] += customer_resources[sequence[position]].need_resources[r];
             } else {
                 // mark thread as cycle_start if there is not already a start
                 if (cycle_start == -1)
@@ -332,11 +333,11 @@ void run_resources() {
             print_array(available_resources, num_resources);
             // run thread by requesting all needed resources
             printf("    Thread has started\n");
-            printf("%s", request_resources(c, customer_resources[c].need_resources));
+            request_resources(c, customer_resources[c].need_resources);
             printf("    Thread has finished\n");
             // release resources
             printf("    Thread is releasing resources\n");
-            printf("%s", release_resources(c, customer_resources[c].allocation_resources));
+            release_resources(c, customer_resources[c].allocation_resources);
             // display new status
             printf("    New available: ");
             print_array(available_resources, num_resources);
