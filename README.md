@@ -2,12 +2,13 @@ _<h1 align= "center">Bankers-Algorithm</h1>_
 
 <h4 align= "center">CP386 Assignment 4</h4>
 
-# Motivation
+# Description
+What is Bankers-Algorithm? (a Brief description of it)
 
 # Installation
-1. Programming Language:<img align="left" alt="C" width="26px" src="https://raw.githubusercontent.com/jmnote/z-icons/master/svg/c.svg" /> <br/>
-2. GCC Complier for C <br/>
-3. Windows Subsystem for Linux 
+--> Programming Language:<img align="Right" alt="C" width="26px" src="https://raw.githubusercontent.com/jmnote/z-icons/master/svg/c.svg"/> <br/>
+--> GCC Complier for C <br/>
+--> Windows Subsystem for Linux 
 
 # Screenshots
 
@@ -15,25 +16,16 @@ _<h1 align= "center">Bankers-Algorithm</h1>_
 
 ### *Function-Wise*
 
-<table>
-    <tr>
-        <th>Function</th>
-        <th>Kelvin</th>
-        <th>Nish</th>
-    </tr>
-    <tr>
-        <td>
-        Function 1
-        Function 2
-        </td>
-        <td>
-        ✔️
-        </td>
-        <td>
-        ✔️
-        </td>
-    </tr>
-</table>
+| Function   | Kelvin | Nish |
+| ---------- | ------ | ---- | 
+| Function 1 |        |      |
+| Function 2 |        |      |
+| Function 3 |        |      |
+| Function 4 |        |      |
+| Function 5 |        |      |
+| Function 6 |        |      |
+| Function 7 |        |      |
+| Function 8 |        |      |
 
 # Features
 
