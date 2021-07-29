@@ -11,9 +11,6 @@ Question1: Question1.c
 	
 runq1: Question1
 	./Question1 10 5 7 8
-
-run:
-	./bank.exe 10 5 7 8
 	
 clean:
 	rm -f $(OBJFILES) $(TARGET) *~ 
