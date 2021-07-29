@@ -20,10 +20,14 @@ _<h1 align= "center">Bankers-Algorithm</h1>_
     </tr>
     <tr>
         <td>
+        Function 1
+        Function 2
         </td>
         <td>
+        ✔️
         </td>
         <td>
+        ✔️
         </td>
     </tr>
 </table>
