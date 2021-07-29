@@ -1,4 +1,5 @@
 /**
+ * 
  * Banker's Algoritm
  * CP 386 --> Assignment 4
  * 
@@ -6,6 +7,7 @@
  * @author Nishant Tewari (190684430) - https://github.com/XSilviaX
  * 
  * @see https://github.com/kelvinkellner/Bankers-Algorithm
+ * 
  */
 
 #include "bank.h"
