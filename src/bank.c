@@ -45,35 +45,34 @@ int main(int argc, char *args[]) {
 void run_program() {
     char *input = NULL;
     size_t len = 0;
-    ssize_t strlen = 0;
+    ssize_t read = 0;
 
     int running = true;
 
     while (running) {
         printf("Enter Command: ");
-        strlen = getline(&input, &len, stdin);
-        if (strlen == -1)
+        read = getline(&input, &len, stdin);
+        if (read == -1)
             // exit on error
             running = false;
         else {
             // convert input to lowercase
-            char *cptr = input;
-            for (; *cptr; ++cptr) {
+            char *ch_ptr = input;
+            for (; *ch_ptr; ++ch_ptr) {
                 // remove line breaks
-                if (*cptr == '\n')
-                    *cptr = '\0';
+                if (*ch_ptr == '\n')
+                    *ch_ptr = '\0';
                 else
                     // call tolower on each character
-                    *cptr = tolower(*cptr);
+                    *ch_ptr = tolower(*ch_ptr);
             }
 
             // call appropriate function per command
-            if (input == "RQ") {
+            if (strlen(input) >= 2 && input[0] == 'r' && input[1] == 'q') {
+                handle_request(input, len, request_resource);
+            } else if (strlen(input) >= 2 && input[0] == 'r' && input[1] == 'l') {
                 //TODO: Function Call
-                printf("State is safe, and request is satisfied");
-            } else if (input == "RL") {
-                //TODO: Function Call
-                printf("The resources have been released succesfully");
+                printf("The resources have been released succesfully\n");
             } else if (strcmp(input, "status") == 0) {
                 display_status();
             } else if (strcmp(input, "run") == 0) {
@@ -83,7 +82,7 @@ void run_program() {
                 printf("Exiting...\n");
                 running = false;
             } else {
-                printf("Invalid Command.\nPlease Try Again!\n");
+                printf("Invalid Command\n");
             }
         }
     }
@@ -115,7 +114,7 @@ int load_customer_resources() {
     FILE *fp;
     char *line;
     size_t len = 0;
-    ssize_t strlen;
+    ssize_t read;
 
     if ((fp = fopen(FILE_NAME, "r")) == NULL) {
         printf("File opening error.");
@@ -134,16 +133,17 @@ int load_customer_resources() {
     customer_resources = malloc(num_customers * sizeof(Customer));
 
     int r, c = 0;
-    while ((strlen = getline(&line, &len, fp)) != -1) {
+    while ((read = getline(&line, &len, fp)) != -1) {
         Customer customer;
-        customer.maximum_resources = delimited_string_to_int_array(line, ",", num_resources);
+        customer.max_resources = delimited_string_to_int_array(line, ",", num_resources);
         customer.allocation_resources = malloc(sizeof(int) * num_resources);
         customer.need_resources = malloc(sizeof(int) * num_resources);
         // ensure no memory-related value issues occur
         for (r = 0; r < num_resources; r++)
             customer.allocation_resources[r] = 0;
+        // need = max - allocation, allocation is all 0s now, set to max to start
         for (r = 0; r < num_resources; r++)
-            customer.need_resources[r] = 0;
+            customer.need_resources[r] = customer.max_resources[r];
         customer_resources[c] = customer;
         c++;
     }
@@ -165,7 +165,7 @@ void display_status() {
 
     printf("Maximum Resources:\n");
     for (c = 0; c < num_customers; c++)
-        print_array(customer_resources[c].maximum_resources, num_resources);
+        print_array(customer_resources[c].max_resources, num_resources);
 
     printf("Allocated Resources:\n");
     for (c = 0; c < num_customers; c++)
@@ -177,12 +177,50 @@ void display_status() {
 }
 
 /**
- * def'n 
+ * Processes a request for resources from the bank.
+ * Determines whether request is possible and safe, fulfilling the request-
+ * or notifies the customer to either wait or make a different request.
  *  
  * @author Kelvin Kellner 
  * @author Nish Tewari
  */
-void request_resource(int *request) {
+void request_resource(int customer_number, int *request) {
+    // uses resource-request algorithm from lecture notes
+    int r, c = customer_number;
+    bool valid = true, safe;
+    // condition 1: request vector <= customer's need vector, request has exceeding it's maximum claim
+    for (r = 0; r < num_resources && valid; r++)
+        valid = request[r] <= customer_resources[c].need_resources[r];
+
+    if (valid) {
+        // condition 2: request vector <= available vector, customer must wait til resources are available
+        for (r = 0; r < num_resources && valid; r++)
+            valid = request[r] <= available_resources[r];
+        if (valid) {
+            // temporarily modify values to determine if safe
+            for (r = 0; r < num_resources; r++) {
+                available_resources[r] = available_resources[r] - request[r];
+                customer_resources[c].allocation_resources[r] = customer_resources[c].allocation_resources[r] + request[r];
+                customer_resources[c].need_resources[r] = customer_resources[c].need_resources[r] - request[r];
+            }
+            if (is_safe()) {
+                // if system is safe after fulfilling the resource request, print success message
+                printf("State is safe, and request is satisfied\n");
+            } else {
+                // if system becomes unsafe, undo temporary changes to value and print failure message
+                for (r = 0; r < num_resources; r++) {
+                    available_resources[r] = available_resources[r] + request[r];
+                    customer_resources[c].allocation_resources[r] = customer_resources[c].allocation_resources[r] - request[r];
+                    customer_resources[c].need_resources[r] = customer_resources[c].need_resources[r] + request[r];
+                }
+                printf("Not enough resources available, please wait\n");
+            }
+        } else {
+            printf("Not enough resources available, please wait\n");
+        }
+    } else {
+        printf("Request exceeds maximum resource claim, cannot be satisfied\n");
+    }
 }
 
 /**
@@ -247,4 +285,61 @@ bool is_safe() {
     free(work);
     free(finish);
     return safe;
+}
+
+/**
+ * Help function for RQ and RL commands to process
+ * and validate command calls.
+ * 
+ * @author Kelvin Kellner
+ * @author Nish Tewari
+ */
+void handle_request(char *input, int len, void (*func)(int, int *)) {
+    int customer_number = -1;
+    int *request = (int *)malloc(len * sizeof(int));
+    int i, n, count = 0;
+    bool is_number = true, valid = true;
+    char *token = strsep(&input, " ");  // skip "rq"
+    while ((token = strsep(&input, " ")) != NULL && valid) {
+        // check if value is numeric first, only valid entries please!
+        n = strlen(token);
+        for (i = 0; i < n && is_number; i++)
+            is_number = token[i] >= '0' && token[i] <= '9';
+        if (is_number) {
+            if (customer_number == -1) {  // number for customer
+                if (atoi(token) >= 0) {
+                    customer_number = atoi(token);
+                } else {
+                    valid = false;
+                    printf("Bad command, negative values are not acceptable\n");
+                }
+            } else {  // number for resource
+                if (count <= num_resources) {
+                    if (atoi(token) >= 0) {
+                        request[count] = atoi(token);
+                        count++;  // increment count
+                    } else {
+                        valid = false;
+                        printf("Bad command, negative values are not acceptable\n");
+                    }
+                } else {
+                    valid = false;
+                    printf("Bad command, more arguments given than needed\n");
+                }
+            }
+        } else {
+            valid = false;
+            printf("Bad command, non-numeric argument given\n");
+        }
+    }
+    if (valid) {
+        if (count == num_resources) {
+            // valid!!! go ahead and call the function
+            func(customer_number, request);
+        } else {
+            valid = false;
+            printf("Bad command, not enough arguments given\n");
+        }
+    }
+    free(request);  // no memory leaks :)
 }

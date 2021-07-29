@@ -13,7 +13,7 @@ int num_resources;
 int num_customers;
 
 typedef struct customer {
-    int *maximum_resources;
+    int *max_resources;
     int *allocation_resources;
     int *need_resources;
 } Customer;
@@ -21,18 +21,16 @@ typedef struct customer {
 int *available_resources;
 Customer *customer_resources;
 
-typedef struct request {
-    int customer_number;
-    int *allocation;
-} Request;
-
 /* Function Headers */
 void load_available_resources(int argc, char *args[]);
 int load_customer_resources();
 void run_program();
 
 void display_status();
-void request_resource();
+void request_resource(int customer_number, int *request);
 void release_resource();
 void run_resource();
+
 bool is_safe();
+
+void handle_request(char *input, int len, void (*func)(int, int *));
