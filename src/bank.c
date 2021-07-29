@@ -225,7 +225,7 @@ char *request_resources(int customer_number, int *request) {
                 customer_resources[c].allocation_resources[r] += request[r];
                 customer_resources[c].need_resources[r] -= request[r];
             }
-            if (is_safe()) {
+            if (is_safe(NULL)) {
                 // if system is safe after fulfilling the resource request, print success message
                 return "State is safe, and request is satisfied\n";
             } else {
@@ -279,53 +279,57 @@ char *release_resources(int customer_number, int *request) {
  * @author Nish Tewari
  */
 void run_resources() {
-    // using algorithm Kelvin tried and figured out on paper, works in all tested cases
-    // consider digging deeper into lectures and online to see if there is a better solution
+    // // using algorithm Kelvin tried and figured out on paper, works in all tested cases
+    // // consider digging deeper into lectures and online to see if there is a better solution
+    // int *sequence = (int *)malloc(num_customers * sizeof(int));
+    // int *all_resources = (int *)malloc(num_resources * sizeof(int));  // all_resources = available_resources + need_resources of all prior, threads in the sequence
+    // int c, r, position = 0, cycle_start = -1, temp;
+    // bool safe_sequence_exists = true, thread_can_finish;
+    // // first, find a safe sequence if there is one
+    // // default sequence is < 0, 1, 2, 3, ..., num_customers >
+    // for (c = 0; c < num_customers; c++)
+    //     sequence[c] = c;
+    // // all_resources = available_resources to start
+    // for (r = 0; r < num_resources; r++)
+    //     all_resources[r] = available_resources[r];
+    // while (position < num_customers && safe_sequence_exists) {
+    //     // if there is a cycle we have exhausted all remaining sequences, there are no safe sequences
+    //     // note: it is certainly possible for this algorithm to miss some solutions, more testing is needed to confirm correctness!
+    //     if (cycle_start == sequence[position]) {
+    //         safe_sequence_exists = false;
+    //     } else {
+    //         // check if current thread can finish with all available and prior resources
+    //         thread_can_finish = true;
+    //         for (r = 0; r < num_resources; r++) {
+    //             // if needs more resources than available from sequence so far
+    //             if (customer_resources[sequence[position]].need_resources[r] > all_resources[r])
+    //                 thread_can_finish = false;
+    //         }
+    //         // do the appropriate action whether it can finish immediately or needs to wait until later in the sequence
+    //         if (thread_can_finish) {
+    //             // add the resources from the thread to all_resources
+    //             for (r = 0; r < num_resources; r++)
+    //                 // had .need_resources[r] before, switching to .allocation_resources[r] fixed as per paper on front of me lol
+    //                 all_resources[r] += customer_resources[sequence[position]].allocation_resources[r];
+    //             // clear cycle_start and move position forward, this position is where thread will sit in our sequence
+    //             cycle_start = -1;
+    //             position++;
+    //         } else {
+    //             // mark thread as cycle_start if there is not already a start
+    //             if (cycle_start == -1)
+    //                 cycle_start = sequence[position];
+    //             // move thread to back of sequence for now;
+    //             temp = sequence[position];
+    //             for (c = position + 1; c < num_customers; c++)
+    //                 sequence[c - 1] = sequence[c];
+    //             sequence[num_customers - 1] = temp;
+    //         }
+    //     }
+    // }
+    // check if a safe sequence exists and store the sequence in sequence
+    int c, position;
     int *sequence = (int *)malloc(num_customers * sizeof(int));
-    int *all_resources = (int *)malloc(num_resources * sizeof(int));  // all_resources = available_resources + need_resources of all prior, threads in the sequence
-    int c, r, position = 0, cycle_start = -1, temp;
-    bool safe_sequence_exists = true, thread_can_finish;
-    // first, find a safe sequence if there is one
-    // default sequence is < 0, 1, 2, 3, ..., num_customers >
-    for (c = 0; c < num_customers; c++)
-        sequence[c] = c;
-    // all_resources = available_resources to start
-    for (r = 0; r < num_resources; r++)
-        all_resources[r] = available_resources[r];
-    while (position < num_customers && safe_sequence_exists) {
-        // if there is a cycle we have exhausted all remaining sequences, there are no safe sequences
-        // note: it is certainly possible for this algorithm to miss some solutions, more testing is needed to confirm correctness!
-        if (cycle_start == sequence[position]) {
-            safe_sequence_exists = false;
-        } else {
-            // check if current thread can finish with all available and prior resources
-            thread_can_finish = true;
-            for (r = 0; r < num_resources; r++) {
-                // if needs more resources than available from sequence so far
-                if (customer_resources[sequence[position]].need_resources[r] > all_resources[r])
-                    thread_can_finish = false;
-            }
-            // do the appropriate action whether it can finish immediately or needs to wait until later in the sequence
-            if (thread_can_finish) {
-                // add the resources from the thread to all_resources
-                for (r = 0; r < num_resources; r++)
-                    // had .need_resources[r] before, switching to .allocation_resources[r] fixed as per paper on front of me lol
-                    all_resources[r] += customer_resources[sequence[position]].allocation_resources[r];
-                // clear cycle_start and move position forward, this position is where thread will sit in our sequence
-                cycle_start = -1;
-                position++;
-            } else {
-                // mark thread as cycle_start if there is not already a start
-                if (cycle_start == -1)
-                    cycle_start = sequence[position];
-                // move thread to back of sequence for now;
-                temp = sequence[position];
-                for (c = position + 1; c < num_customers; c++)
-                    sequence[c - 1] = sequence[c];
-                sequence[num_customers - 1] = temp;
-            }
-        }
-    }
+    bool safe_sequence_exists = is_safe(&sequence);
     // once we have a safe sequence, we can run it
     if (safe_sequence_exists) {
         printf("Safe sequence is: ");
@@ -361,11 +365,11 @@ void run_resources() {
  * @author Kelvin Kellner
  * @author Nish Tewari
  */
-bool is_safe() {
+bool is_safe(int *sequence[]) {
     // use safety algorithm from lecture
     int *work = (int *)malloc(num_resources * sizeof(int));
     bool *finish = (bool *)malloc(num_customers * sizeof(bool));
-    int r, c;
+    int r, c, count = 0;
     // fill vectors with starting values
     for (r = 0; r < num_resources; r++)
         work[r] = available_resources[r];
@@ -390,11 +394,30 @@ bool is_safe() {
                     for (int r = 0; r < num_resources; r++)
                         work[r] += customer_resources[c].allocation_resources[r];
                     finish[c] = true;
+                    // if function call has given a sequence to fill, then put the customer number as the next number in the sequenced
+                    if (sequence) {
+                        (*sequence)[count] = c;
+                        count++;
+                    }
+                }
+                if (sequence) {
+                    printf("%d, ", c);
+                    printf("%s, ", finish[c] ? "true" : "false");
+                    print_array(*sequence, num_customers);
                 }
             }
-            safe = safe && finish[c];  // system is safe if all customers have finished
         }
+        for (c = 0; c < num_customers; c++)
+            safe = safe && finish[c];   // system is safe if all customers have finished
     } while (found_customer && !safe);  // loop until either (state is safe) or (state is unsafe and no changes are made to system)
+    // free from memory before making null
+    if (sequence)
+        print_array(*sequence, num_customers);
+    if (!safe) {
+        free(*sequence);
+        *sequence = NULL;
+    }
+    printf("Safe: %s\n", safe ? "true" : "false");
     // no memory leaks please :)
     free(work);
     free(finish);
