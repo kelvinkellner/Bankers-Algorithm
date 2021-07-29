@@ -314,7 +314,7 @@ void handle_request(char *input, int len, void (*func)(int, int *)) {
                     printf("Bad command, negative values are not acceptable\n");
                 }
             } else {  // number for resource
-                if (count <= num_resources) {
+                if (count < num_resources) {
                     if (atoi(token) >= 0) {
                         request[count] = atoi(token);
                         count++;  // increment count
