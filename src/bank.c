@@ -198,9 +198,9 @@ void request_resources(int customer_number, int *request) {
         if (valid) {
             // temporarily modify values to determine if safe
             for (r = 0; r < num_resources; r++) {
-                available_resources[r] = available_resources[r] - request[r];
-                customer_resources[c].allocation_resources[r] = customer_resources[c].allocation_resources[r] + request[r];
-                customer_resources[c].need_resources[r] = customer_resources[c].need_resources[r] - request[r];
+                available_resources[r] -= request[r];
+                customer_resources[c].allocation_resources[r] += request[r];
+                customer_resources[c].need_resources[r] -= request[r];
             }
             if (is_safe()) {
                 // if system is safe after fulfilling the resource request, print success message
@@ -208,11 +208,11 @@ void request_resources(int customer_number, int *request) {
             } else {
                 // if system becomes unsafe, undo temporary changes to value and print failure message
                 for (r = 0; r < num_resources; r++) {
-                    available_resources[r] = available_resources[r] + request[r];
-                    customer_resources[c].allocation_resources[r] = customer_resources[c].allocation_resources[r] - request[r];
-                    customer_resources[c].need_resources[r] = customer_resources[c].need_resources[r] + request[r];
+                    available_resources[r] += request[r];
+                    customer_resources[c].allocation_resources[r] -= request[r];
+                    customer_resources[c].need_resources[r] += request[r];
                 }
-                printf("Not enough resources available, please wait\n");
+                printf("State is unsafe, not enough resources available for that request\n");
             }
         } else {
             printf("Not enough resources available, please wait\n");
@@ -248,12 +248,14 @@ void release_resources(int customer_number, int *request) {
 }
 
 /**
- * def'n 
+ * Executes customers as threads in a safe sequence.
  *  
  * @author Kelvin Kellner 
  * @author Nish Tewari
  */
 void run_resources() {
+    // for each customer
+    // if enough resources in past + present then good
 }
 
 /**
@@ -271,6 +273,7 @@ bool is_safe() {
     // fill with default values
     for (r = 0; r < num_resources; r++)
         work[r] = available_resources[r];
+    // if allocation vector all 0s then default to true else default to false
     for (c = 0; c < num_customers; c++)
         finish[c] = false;
     // default values for looping
@@ -288,7 +291,7 @@ bool is_safe() {
                 // if both conditions are met...
                 if (found_customer) {
                     // update work and finish vectors to reflect changes
-                    for (int j = 0; j < num_resources; j++)
+                    for (int r = 0; r < num_resources; r++)
                         work[r] += customer_resources[c].allocation_resources[r];
                     finish[c] = true;
                 }
