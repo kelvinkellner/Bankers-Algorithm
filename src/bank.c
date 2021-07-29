@@ -19,18 +19,20 @@
  * @author Nish Tewari
  */
 int main(int argc, char *args[]) {
+    // confirm arguments are valid
     if (argc < 3) {
         printf("Please include at least 2 space-delimited integer arguments.\n");
         return 1;
     }
 
+    // load data from arguments and file
     load_available_resources(argc, args);
     load_customer_resources();
 
-    // printf("%d %d\n", num_customers, num_resources);
-
+    // start event loop
     run_program();
 
+    // exuent
     return 0;
 }
 
@@ -43,15 +45,16 @@ int main(int argc, char *args[]) {
  * @author Nish Tewari
  */
 void run_program() {
+    // for reading from console
     char *input = NULL;
     size_t len = 0;
     ssize_t read = 0;
 
+    // loop until told to stop (from "exit" command)
     int running = true;
-
     while (running) {
         printf("Enter Command: ");
-        read = getline(&input, &len, stdin);
+        read = getline(&input, &len, stdin);  // read line from console
         if (read == -1)
             // exit on error
             running = false;
@@ -68,24 +71,29 @@ void run_program() {
             }
 
             // call appropriate function per command
-            if (strlen(input) >= 2 && input[0] == 'r' && input[1] == 'q') {
+            // "RQ ..."
+            if (strlen(input) >= 2 && input[0] == 'r' && input[1] == 'q')
                 handle_request(input, len, request_resources);
-            } else if (strlen(input) >= 2 && input[0] == 'r' && input[1] == 'l') {
+            // "RL ..."
+            else if (strlen(input) >= 2 && input[0] == 'r' && input[1] == 'l')
                 handle_request(input, len, release_resources);
-            } else if (strcmp(input, "status") == 0) {
+            // "Status"
+            else if (strcmp(input, "status") == 0)
                 display_status();
-            } else if (strcmp(input, "run") == 0) {
+            // "Run"
+            else if (strcmp(input, "run") == 0)
                 run_resources();
-            } else if (strcmp(input, "exit") == 0) {
+            // "Exit"
+            else if (strcmp(input, "exit") == 0) {
                 printf("Exiting...\n");
                 running = false;
-            } else {
-                printf("Invalid Command\n");
             }
+            // otherwise...
+            else
+                printf("Invalid Command\n");
         }
     }
-
-    free(input);
+    free(input);  // no memory leaks :)
 }
 
 /**
@@ -95,8 +103,8 @@ void run_program() {
  * @author Nish Tewari
  */
 void load_available_resources(int argc, char *args[]) {
-    num_resources = argc - 1;
-    available_resources = (int *)malloc((num_resources) * sizeof(int));  // allocate memory for arry
+    num_resources = argc - 1;                                            // first arg is always program call
+    available_resources = (int *)malloc((num_resources) * sizeof(int));  // allocate memory for array
     for (int i = 0; i < num_resources; i++) {
         available_resources[i] = atoi(args[i + 1]);  // fill array using args
     }
@@ -109,43 +117,49 @@ void load_available_resources(int argc, char *args[]) {
  * @author Nish Tewari
  */
 int load_customer_resources() {
+    // for reading from file
     FILE *fp;
     char *line;
     size_t len = 0;
     ssize_t read;
 
+    // attempt to open from file
     if ((fp = fopen(FILE_NAME, "r")) == NULL) {
+        // quit if there is an error
         printf("File opening error.");
         return -1;
     }
 
     num_customers = 1;  // start at one since last line does not have line break
-    char ch;
     // count number of lines in the file
+    char ch;
     while ((ch = fgetc(fp)) != EOF) {
         if (ch == '\n')
             num_customers++;
     }
-    fseek(fp, 0, SEEK_SET);  // reset fp back to start
+    fseek(fp, 0, SEEK_SET);  // reset fp back to start after counting
 
+    // allocate memory for customer_resources data structure
     customer_resources = malloc(num_customers * sizeof(Customer));
 
+    // read customer data from file
     int r, c = 0;
-    while ((read = getline(&line, &len, fp)) != -1) {
+    while ((read = getline(&line, &len, fp)) != -1) {  // for each line in file
+        // create customer data structure and fill with data
         Customer customer;
         customer.max_resources = delimited_string_to_int_array(line, ",", num_resources);
         customer.allocation_resources = malloc(sizeof(int) * num_resources);
         customer.need_resources = malloc(sizeof(int) * num_resources);
-        // ensure no memory-related value issues occur
+        // ensure no memory-related value issues occur by setting values to 0 (frick C)
         for (r = 0; r < num_resources; r++)
             customer.allocation_resources[r] = 0;
-        // need = max - allocation, allocation is all 0s now, set to max to start
+        // need = max - allocation, allocation is all 0s now, so set to need = max to start
         for (r = 0; r < num_resources; r++)
             customer.need_resources[r] = customer.max_resources[r];
         customer_resources[c] = customer;
         c++;
     }
-
+    // no memory leaks please :)
     free(line);
     fclose(fp);
 }
@@ -157,6 +171,7 @@ int load_customer_resources() {
  * @author Nish Tewari
  */
 void display_status() {
+    // print status for all data structures
     int c;
     printf("Available Resources:\n");
     print_array(available_resources, num_resources);
@@ -222,23 +237,25 @@ char *request_resources(int customer_number, int *request) {
 }
 
 /**
- * def'n 
+ * Releases resources from a customer and makes them available again.
  *  
  * @author Kelvin Kellner 
  * @author Nish Tewari
  */
 char *release_resources(int customer_number, int *request) {
-    int r;
+    int r, c = customer_number;
+    // optional extra validation in case someone really tries to breaky-breaky :eyes:
     bool valid = true;
     // check if release vector > allocation vector, otherwise a release request might "create new resources"
     for (r = 0; r < num_resources; r++) {
         // not exhaustive, we do not check if this customer is the one holding the resources, not important
-        if (request[r] > customer_resources[customer_number].allocation_resources[r])
+        if (request[r] > customer_resources[c].allocation_resources[r])
             valid = false;
     }
     if (valid) {
+        // release those resources!
         for (r = 0; r < num_resources; r++) {
-            // simplfy make the resources available again
+            // simply make the resources available again
             available_resources[r] += request[r];
         }
         return "Resources have been released\n";
@@ -256,11 +273,11 @@ void run_resources() {
     // using algorithm Kelvin tried and figured out on paper, works in all tested cases
     // consider digging deeper into lectures and online to see if there is a better solution
     int *sequence = (int *)malloc(num_customers * sizeof(int));
-    int *all_resources = (int *)malloc(num_resources * sizeof(int));  // all available resources + all resources of prior, already finished threads
+    int *all_resources = (int *)malloc(num_resources * sizeof(int));  // all_resources = available_resources + need_resources of all prior, threads in the sequence
     int c, r, position = 0, cycle_start = -1, temp;
     bool safe_sequence_exists = true, thread_can_finish;
     // first, find a safe sequence if there is one
-    // default sequence is 0, 1, 2, 3, ..., num_customers
+    // default sequence is < 0, 1, 2, 3, ..., num_customers >
     for (c = 0; c < num_customers; c++)
         sequence[c] = c;
     // all_resources = available_resources to start
@@ -268,7 +285,7 @@ void run_resources() {
         all_resources[r] = available_resources[r];
     while (position < num_customers && safe_sequence_exists) {
         // if there is a cycle we have exhausted all remaining sequences, there are no safe sequences
-        // note: it is certainly possible for this algorithm to miss some solutions, more testing is needed
+        // note: it is certainly possible for this algorithm to miss some solutions, more testing is needed to confirm correctness!
         if (cycle_start == sequence[position]) {
             safe_sequence_exists = false;
         } else {
@@ -293,14 +310,11 @@ void run_resources() {
                     cycle_start = sequence[position];
                 // move thread to back of sequence for now;
                 temp = sequence[position];
-                for (c = position + 1; c < num_customers; c++) {
+                for (c = position + 1; c < num_customers; c++)
                     sequence[c - 1] = sequence[c];
-                }
                 sequence[num_customers - 1] = temp;
             }
         }
-        // printf("cycle_start: %d, position: %d, sequence: ");
-        // print_array(sequence, num_customers);
     }
     // once we have a safe sequence, we can run it
     if (safe_sequence_exists) {
@@ -327,14 +341,12 @@ void run_resources() {
             printf("    New available: ");
             print_array(available_resources, num_resources);
         }
-    } else {
+    } else
         printf("Safe sequence is: There are no safe sequences\n");
-    }
 }
 
 /**
- * Uses Saftey Algorithm to determine whether or not
- * system is in a safe state.
+ * Uses Saftey Algorithm to determine whether or not system is in a safe state.
  * 
  * @author Kelvin Kellner
  * @author Nish Tewari
@@ -344,13 +356,13 @@ bool is_safe() {
     int *work = (int *)malloc(num_resources * sizeof(int));
     bool *finish = (bool *)malloc(num_customers * sizeof(bool));
     int r, c;
-    // fill with default values
+    // fill vectors with starting values
     for (r = 0; r < num_resources; r++)
         work[r] = available_resources[r];
-    // if allocation vector all 0s then default to true else default to false
     for (c = 0; c < num_customers; c++)
         finish[c] = false;
-    // default values for looping
+
+    // loop until either (state is safe) or (state is unsafe and no changes are made to system)
     bool safe, found_customer;
     do {
         safe = true;
@@ -372,7 +384,7 @@ bool is_safe() {
             }
             safe = safe && finish[c];  // system is safe if all customers have finished
         }
-    } while (found_customer && !safe);  // loop until (state is safe) or (state is unsafe and no changes are made to system)
+    } while (found_customer && !safe);  // loop until either (state is safe) or (state is unsafe and no changes are made to system)
     // no memory leaks please :)
     free(work);
     free(finish);
@@ -380,8 +392,7 @@ bool is_safe() {
 }
 
 /**
- * Help function for RQ and RL commands to process
- * and validate command calls.
+ * Help function for RQ and RL commands to process and validate command calls.
  * 
  * @author Kelvin Kellner
  * @author Nish Tewari
@@ -390,53 +401,62 @@ char *handle_request(char *input, int len, char *(*func)(int, int *)) {
     int customer_number = -1;
     int *request = (int *)malloc(len * sizeof(int));
     int i, n, count = 0;
+    // valid is not needed anymore, since changing from a void* to char* function, still leaving it because it does no harm :)
     bool is_number = true, valid = true;
+
+    // begin processing given command in string input, token stores next value of input split by space as a delimeter
     char *token = strsep(&input, " ");  // skip "RQ" or "RL"
     while ((token = strsep(&input, " ")) != NULL && valid) {
-        // check if value is numeric first, only valid entries please!
+        // check if token is numeric first, only valid entries please!
         n = strlen(token);
-        for (i = 0; i < n && is_number; i++)
+        for (i = 0; i < n && is_number; i++)  // if all characters in token are numeric
             is_number = token[i] >= '0' && token[i] <= '9';
         if (is_number) {
-            if (customer_number == -1) {  // number for customer
-                if (atoi(token) >= 0) {
+            // use the number as customer_number if it is the first number we find
+            if (customer_number == -1) {
+                if (atoi(token) >= 0)
+                    // use as customer_number
                     customer_number = atoi(token);
-                } else {
+                else {
                     valid = false;
-                    free(request);
+                    free(request);  // no memory leaks :)
                     return "Bad command, negative values are not acceptable\n";
                 }
-            } else {  // number for resource
+
+            } else {
+                // all following numbers are used as resource amounts
                 if (count < num_resources) {
-                    if (atoi(token) >= 0) {
+                    if (atoi(token) >= 0) {  // if positive
+                        // store number in the request array
                         request[count] = atoi(token);
                         count++;  // increment count
                     } else {
                         valid = false;
-                        free(request);
+                        free(request);  // no memory leaks :)
                         return "Bad command, negative values are not acceptable\n";
                     }
                 } else {
                     valid = false;
-                    free(request);
+                    free(request);  // no memory leaks :)
                     return "Bad command, more arguments given than needed\n";
                 }
             }
         } else {
             valid = false;
-            free(request);
+            free(request);  // no memory leaks :)
             return "Bad command, non-numeric argument given\n";
         }
     }
     if (valid) {
+        // if all numbers are processed and the amount of numbers given = num_resources
         if (count == num_resources) {
-            // valid!!! go ahead and call the function, return its return value :)
+            // the request is valid!!! go ahead and call the appropriate function and return its return value :)
             char *msg = func(customer_number, request);
-            free(request);
+            free(request);  // no memory leaks :)
             return msg;
         } else {
             valid = false;
-            free(request);
+            free(request);  // no memory leaks :)
             return "Bad command, not enough arguments given\n";
         }
     }
