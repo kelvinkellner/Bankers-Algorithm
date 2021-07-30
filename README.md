@@ -8,8 +8,8 @@ What is Bankers-Algorithm? (a Brief description of it)
 
 # Installation
 
---> Programming Language:<img alt="C" width="26px" src="https://raw.githubusercontent.com/jmnote/z-icons/master/svg/c.svg"/> <br/>
---> GCC Complier for C <br/>
+--> C Programming Language<br/>
+--> GCC Complier for C<br/>
 --> Windows Subsystem for Linux<br/>
 
 Compile the program using GCC. When running, pass a list of space-delimited integers as arguments.
