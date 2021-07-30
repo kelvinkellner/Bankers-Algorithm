@@ -56,16 +56,16 @@ To compile and run:<br/>
 | Function 8 |        |      |
 
 # Features
---> Request Resource Command
-    ...
---> Run Resourse Command
-    ...
---> Status Command
-    ...
---> Run Command
-    ...
---> Exit Command
-    ...
+--> Request Resource Command <br/>
+    ... <br/>
+--> Run Resourse Command <br/>
+    ... <br/>
+--> Status Command <br/>
+    ... <br/>
+--> Run Command <br/>
+    ... <br/>
+--> Exit Command <br/>
+    ... <br/>
 # Test cases
 
 This section will be for the various test cases used to test our algo! 
