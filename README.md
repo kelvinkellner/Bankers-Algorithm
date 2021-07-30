@@ -44,17 +44,18 @@ To compile and run:<br/>
 
 ### _Function-Wise_
 
-| Function                | Kelvin | Nish |
-| ----------------------- | ------ | ---- |
-| run_program             |        |      |
-| load_available_resoures |        |      |
-| load_customer_resources |        |      |
-| display_status          |        |      |
-| request_resources       |        |      |
-| release_resources       |        |      |
-| run_resources           |        |      |
-| is_safe                 |        |      |
-| handle_request          |        |      |
+| Function                | Kelvin  | Nish  |
+| ----------------------- | ------  | ----- |
+| main                    |    X    |   X   |
+| run_program             |         |       |
+| load_available_resoures |         |       |
+| load_customer_resources |         |       |
+| display_status          |         |       |
+| request_resources       |         |       |
+| release_resources       |         |       |
+| run_resources           |         |       |
+| is_safe                 |         |       |
+| handle_request          |         |       |
 
 # Features
 --> Request Resource Command <br/>
