@@ -8,17 +8,17 @@ What is Bankers-Algorithm? (a Brief description of it)
 
 # Installation
 
---> Programming Language:<img align="left" alt="C" width="26px" src="https://raw.githubusercontent.com/jmnote/z-icons/master/svg/c.svg"/> <br/>
+--> Programming Language:<img alt="C" width="26px" src="https://raw.githubusercontent.com/jmnote/z-icons/master/svg/c.svg"/> <br/>
 --> GCC Complier for C <br/>
---> Windows Subsystem for Linux
+--> Windows Subsystem for Linux<br/>
 
 Compile the program using GCC. When running, pass a list of space-delimited integers as arguments.
 The value of the number represents the number of available resources of that type of resource.
 Edit sample4_in.txt to change the threads/customers. Each line in the file represents a thread,
 and the comma-delimited values represent the amount of each type of resource that the thread needs.
 
-To compile and run:
-<img src="./img/ss_1.png" alt="screenshot of compiling and running the program" />
+To compile and run:<br/>
+<img src="./img/ss_1.png" alt="screenshot of compiling and running the program" /><br/>
 
 # Features / Commands
 
