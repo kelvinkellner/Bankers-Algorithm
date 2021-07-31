@@ -64,7 +64,7 @@ To compile and run:<br/>
 
 # Test cases
 
-See an example test case [here](https://github.com/kelvinkellner/Bankers-Algorithm/blob/main/img/sample_output.md).
+See an example test case [here](https://github.com/kelvinkellner/Bankers-Algorithm/blob/main/docs/sample_output.md).
 
 # Contributors
 
