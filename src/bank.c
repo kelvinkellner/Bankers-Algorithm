@@ -210,38 +210,50 @@ char *request_resources(int customer_number, int *request) {
     // uses resource-request algorithm from lecture notes
     int r, c = customer_number;
     bool valid = true, safe;
-    // condition 1: request vector <= customer's need vector, request has exceeding it's maximum claim
-    for (r = 0; r < num_resources && valid; r++)
-        valid = request[r] <= customer_resources[c].need_resources[r];
+
+    // check if request is all 0s
+    valid = false;
+    for (r = 0; r < num_resources; r++) {
+        if (request[r] != 0)
+            valid = true;
+    }
 
     if (valid) {
-        // condition 2: request vector <= available vector, customer must wait til resources are available
+        // condition 1: request vector <= customer's need vector, request has exceeding it's maximum claim
         for (r = 0; r < num_resources && valid; r++)
-            valid = request[r] <= available_resources[r];
+            valid = request[r] <= customer_resources[c].need_resources[r];
+
         if (valid) {
-            // temporarily modify values to determine if safe
-            for (r = 0; r < num_resources; r++) {
-                available_resources[r] -= request[r];
-                customer_resources[c].allocation_resources[r] += request[r];
-                customer_resources[c].need_resources[r] -= request[r];
-            }
-            if (is_safe(NULL)) {
-                // if system is safe after fulfilling the resource request, print success message
-                return "State is safe, and request is satisfied\n";
-            } else {
-                // if system becomes unsafe, undo temporary changes to value and print failure message
+            // condition 2: request vector <= available vector, customer must wait til resources are available
+            for (r = 0; r < num_resources && valid; r++)
+                valid = request[r] <= available_resources[r];
+            if (valid) {
+                // temporarily modify values to determine if safe
                 for (r = 0; r < num_resources; r++) {
-                    available_resources[r] += request[r];
-                    customer_resources[c].allocation_resources[r] -= request[r];
-                    customer_resources[c].need_resources[r] += request[r];
+                    available_resources[r] -= request[r];
+                    customer_resources[c].allocation_resources[r] += request[r];
+                    customer_resources[c].need_resources[r] -= request[r];
                 }
-                return "State is unsafe, not enough resources available for that request\n";
+                if (is_safe(NULL)) {
+                    // if system is safe after fulfilling the resource request, print success message
+                    return "State is safe, and request is satisfied\n";
+                } else {
+                    // if system becomes unsafe, undo temporary changes to value and print failure message
+                    for (r = 0; r < num_resources; r++) {
+                        available_resources[r] += request[r];
+                        customer_resources[c].allocation_resources[r] -= request[r];
+                        customer_resources[c].need_resources[r] += request[r];
+                    }
+                    return "State is unsafe, not enough resources available for that request\n";
+                }
+            } else {
+                return "Not enough resources available, please wait\n";
             }
         } else {
-            return "Not enough resources available, please wait\n";
+            return "Request exceeds maximum resource claim, cannot be satisfied\n";
         }
     } else {
-        return "Request exceeds maximum resource claim, cannot be satisfied\n";
+        return "Requesting zero resources is illogical";
     }
 }
 
@@ -262,14 +274,25 @@ char *release_resources(int customer_number, int *request) {
             valid = false;
     }
     if (valid) {
-        // release those resources!
+        valid = false;
+        // check if request is all 0s
         for (r = 0; r < num_resources; r++) {
-            // simply make the resources available again
-            available_resources[r] += request[r];
+            if (request[r] != 0)
+                valid = true;
         }
-        return "Resources have been released\n";
-    } else
+        if (valid) {
+            // release those resources!
+            for (r = 0; r < num_resources; r++) {
+                // simply make the resources available again
+                available_resources[r] += request[r];
+            }
+            return "Resources have been released\n";
+        } else {
+            return "Releasing zero resources is illogical\n";
+        }
+    } else {
         return "Cannot release resources that are not in use\n";
+    }
 }
 
 /**
