@@ -87,7 +87,7 @@ void run_program() {
                 run_resources();
             // "Exit"
             else if (strcmp(input, "exit") == 0) {
-                printf("Exiting...\n");
+                printf("Exiting...\n\n");
                 running = false;
             }
             // otherwise...

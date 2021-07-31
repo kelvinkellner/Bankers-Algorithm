@@ -1,5 +1,5 @@
 # ignore compiled c files
-*.exe
+/src/*.exe
 *.out
 
 # stack dump file
