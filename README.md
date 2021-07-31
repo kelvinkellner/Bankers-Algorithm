@@ -14,7 +14,7 @@ What is Bankers-Algorithm? (a Brief description of it)
 
 Compile the program using GCC. When running, pass a list of space-delimited integers as arguments.
 The value of the number represents the number of available resources of that type of resource.
-Edit sample4_in.txt to change the threads/customers. Each line in the file represents a thread,
+Edit sample4_in.txt to change the customers. Each line in the file represents a thread,
 and the comma-delimited values represent the amount of each type of resource that the thread needs.
 
 To compile and run:<br/>
@@ -25,19 +25,24 @@ To compile and run:<br/>
 - Request resources:<br/>
   <img src="./img/ss_2.png" alt="screenshot of requesting resources successfully" /><br/>
   <img src="./img/ss_3.png" alt="screenshot of request for resources failing" /><br/>
+  Requests an allocation of resources to a thread/customer, succeeds if resources are currently available and system remains safe after processing request, fails otherwise<br/>
   <br/>
 - Release resources:<br/>
   <img src="./img/ss_4.png" alt="screenshot of releasing resources successfully" /><br/>
   <img src="./img/ss_5.png" alt="screenshot of request to release resources failing" /><br/>
+  Releases resources currently being used by a thread/customer and makes them available again, fails if thread has not been allocated those resources<br/>
   <br/>
 - Status:<br/>
   <img src="./img/ss_6.png" alt="screenshot of displaying status of the system" /><br/>
+  Displays the status of the system including available resources, and maximum, allocated, and needed resources for each thread/customer<br/>
   <br/>
 - Run:<br/>
   <img src="./img/ss_7.png" alt="screenshot of running the processes" /><br/>
+  Determines if there is a safe sequence for the threads/customers and executes the sequence if possible<br/>
   <br/>
 - Exit:<br/>
   <img src="./img/ss_8.png" alt="screenshot of exiting the program" /><br/>
+  Terminates the program<br/>
   <br/>
 
 # Individual Contribution
@@ -46,16 +51,16 @@ To compile and run:<br/>
 
 | Function                | Kelvin  | Nish  |
 | ----------------------- | ------  | ----- |
-| main                    |    X    |   X   |
-| run_program             |         |       |
-| load_available_resoures |         |       |
-| load_customer_resources |         |       |
-| display_status          |         |       |
-| request_resources       |         |       |
-| release_resources       |         |       |
-| run_resources           |         |       |
-| is_safe                 |         |       |
-| handle_request          |         |       |
+| main                    |    X    |       |
+| run_program             |    X    |   X   |
+| load_available_resoures |         |   X   |
+| load_customer_resources |    X    |   X   |
+| display_status          |    X    |       |
+| request_resources       |    X    |   X   |
+| release_resources       |    X    |   X   |
+| run_resources           |    X    |   X   |
+| is_safe                 |    X    |   X   |
+| handle_request          |    X    |   X   |
 
 # Features
 --> Request Resource Command <br/>
