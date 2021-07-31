@@ -4,7 +4,7 @@ _<h1 align= "center">Bankers-Algorithm</h1>_
 
 # Description
 
-What is Bankers-Algorithm? (a Brief description of it)
+Banker's algorithm is a resource allocation and deadlock avoidance method that simulates allocation for predefined maximum feasible quantities of all resources in order to test for safety.
 
 # Installation
 
