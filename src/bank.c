@@ -253,7 +253,7 @@ char *request_resources(int customer_number, int *request) {
             return "Request exceeds maximum resource claim, cannot be satisfied\n";
         }
     } else {
-        return "Requesting zero resources is illogical";
+        return "Requesting zero resources is illogical\n";
     }
 }
 
