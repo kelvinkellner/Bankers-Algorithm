@@ -23,25 +23,25 @@ To compile and run:<br/>
 # Features / Commands
 
 - Request resources:<br/>
-  Requests an allocation of resources to a thread/customer, succeeds if resources are currently available and system remains safe after processing request, fails otherwise<br/>
+  Requests an allocation of resources to a thread/customer, succeeds if resources are currently available and system remains safe after processing request, fails otherwise.<br/>
   <img src="./img/ss_2.png" alt="screenshot of requesting resources successfully" /><br/>
   <img src="./img/ss_3.png" alt="screenshot of request for resources failing" /><br/>
   <br/>
 - Release resources:<br/>
-  Releases resources currently being used by a thread/customer and makes them available again, fails if thread has not been allocated those resources<br/>
+  Releases resources currently being used by a thread/customer and makes them available again, fails if thread has not been allocated those resources.<br/>
   <img src="./img/ss_4.png" alt="screenshot of releasing resources successfully" /><br/>
   <img src="./img/ss_5.png" alt="screenshot of request to release resources failing" /><br/>
   <br/>
 - Status:<br/>
-  Displays the status of the system including available resources, and maximum, allocated, and needed resources for each thread/customer<br/>
+  Displays the status of the system including available resources, and maximum, allocated, and needed resources for each thread/customer.<br/>
   <img src="./img/ss_6.png" alt="screenshot of displaying status of the system" /><br/>
   <br/>
 - Run:<br/>
-  Determines if there is a safe sequence for the threads/customers and executes the sequence if possible<br/>
+  Determines if there is a safe sequence for the threads/customers and executes the sequence if possible.<br/>
   <img src="./img/ss_7.png" alt="screenshot of running the processes" /><br/>
   <br/>
 - Exit:<br/>
-  Terminates the program<br/>
+  Terminates the program.<br/>
   <img src="./img/ss_8.png" alt="screenshot of exiting the program" /><br/>
   <br/>
 
