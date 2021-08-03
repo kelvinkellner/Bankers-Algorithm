@@ -77,4 +77,4 @@ See an example test case [here](https://github.com/kelvinkellner/Bankers-Algorit
 
 # Project License
 
-This project is licensed under the **MIT License** which is located [here](https://github.com/kelvinkellner/Bankers-Algorithm/blob/51cdac26b261e5d1328c41437b065f31d17f4da9/LICENSE).
+This project is licensed under the **MIT License** which is located [here](https://github.com/kelvinkellner/Bankers-Algorithm/blob/main/LICENSE).
