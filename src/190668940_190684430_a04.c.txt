@@ -488,8 +488,6 @@ char *handle_request(char *input, int len, char *(*func)(int, int *)) {
     }
 }
 
-#include <string.h>
-
 /**
  * Takes a string, delimeter, and length of array and creates and
  * fills an array with integer conversions of the contents of the
